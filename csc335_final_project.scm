@@ -33,14 +33,13 @@
 ; containing only {∨,¬}, say Q, that is logically equivalent to P.
 
 ; Basis Step:
-;
+; For a proposition v in the set of variables V, v uses no logical connectives,  
 
 ; Inductive Hypothesis:
 ;
 
 ; Inductive Step:
 ;
-
 
 ; ----- ANSWER ENDS HERE -----
 
