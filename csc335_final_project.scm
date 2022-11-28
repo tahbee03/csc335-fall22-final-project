@@ -33,12 +33,16 @@
 ; containing only {∨,¬}, say Q, that is logically equivalent to P.
 
 ; Basis Step:
-; For a proposition v in the set of variables V, v uses no logical connectives,  
+; For a proposition v in the set of variables V, v does not use {∧,∨,¬,⇒}
+; thus it is vacously true that v can be of {∨,¬}, because it cannot be proven
+; otherwise. 
 
 ; Inductive Hypothesis:
-;
+; For any proposition P, there exists a proposition using only {∨,¬} that is
+; logically equivalent to P. 
 
 ; Inductive Step:
+; 
 ;
 
 ; ----- ANSWER ENDS HERE -----
