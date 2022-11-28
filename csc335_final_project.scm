@@ -42,7 +42,11 @@
 ; logically equivalent to P. 
 
 ; Inductive Step:
-; 
+; By the induction hypothesis there is a proposition, say Q, which uses only
+; {∨,¬}, that is logically equivalent to P. To prove there exists a logically
+; equivalent proposition for the logical connective ¬, we can consider ¬P. Since
+; Q <=> P, ¬Q uses only ¬ ∈ {∨,¬}, and ¬Q <=> ¬P. Thus, there exists a logically
+; equivalent proposition for ¬P using only {∨,¬}.
 ;
 
 ; ----- ANSWER ENDS HERE -----
