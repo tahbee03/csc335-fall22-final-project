@@ -28,6 +28,20 @@
 ; ∨ and ¬.
 
 ; ----- ANSWER STARTS HERE -----
+
+; We need to prove that for any proposition P, that there exists a proposiition
+; containing only {∨,¬}, say Q, that is logically equivalent to P.
+
+; Basis Step:
+;
+
+; Inductive Hypothesis:
+;
+
+; Inductive Step:
+;
+
+
 ; ----- ANSWER ENDS HERE -----
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
