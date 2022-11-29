@@ -43,11 +43,31 @@
 
 ; Inductive Step:
 ; By the induction hypothesis there is a proposition, say Q, which uses only
-; {∨,¬}, that is logically equivalent to P. To prove there exists a logically
-; equivalent proposition for the logical connective ¬, we can consider ¬P. Since
-; Q <=> P, ¬Q uses only ¬ ∈ {∨,¬}, and ¬Q <=> ¬P. Thus, there exists a logically
-; equivalent proposition for ¬P using only {∨,¬}.
+; {∨,¬}, that is logically equivalent to P.
 ;
+; ¬
+; To prove there exists a logically equivalent proposition for the logical connective
+; ¬, we can consider ¬P. Since Q <=> P, ¬Q uses only ¬ ∈ {∨,¬}, and ¬Q <=> ¬P. Thus,
+; there exists a logically equivalent proposition for ¬P using only {∨,¬}.
+
+; ∧
+; To prove there exists a logically equivalent proposition for the logical connective
+; ∧, we can consider (P1 ∧ P2). Since Q1 <=> P1 and Q2 <=> P2 by the IH, then using
+; only connectives in {∨,¬}: ¬(¬Q1 ∨ ¬Q2) <=> (Q1 ∧ Q2) <=> (P1 ∧ P2). Thus,
+; there exists a logically equivalent proposition for (P1 ∧ P2) using only {∨,¬}.
+
+; ∨
+; To prove there exists a logically equivalent proposition for the logical connective
+; ∨, we can consider (P1 ∨ P2). Since Q1 <=> P1 and Q2 <=> P2 by the IH, then using
+; only connectives in {∨,¬}: (Q1 ∨ Q2) <=> (P1 ∨ P2). Thus, there exists a logically
+; equivalent proposition for (P1 ∨ P2) using only {∨,¬}.
+
+; ⇒
+; To prove there exists a logically equivalent proposition for the logical connective
+; ⇒, we can consider P1 ⇒ P2. Since Q1 <=> P1 and Q1 <=> P2 by the IH, then using
+; only connectives in {∨,¬} and logical equivalencies for conditional statements:
+; (¬Q1 ∨ Q2) <=> (Q1 ⇒ Q2) <=> (P1 ⇒ P2). Thus, there exists a logically equivalent
+; proposition for (P1 ⇒ P2) using only {∨,¬}.
 
 ; ----- ANSWER ENDS HERE -----
 
