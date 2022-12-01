@@ -53,8 +53,9 @@
 ; ∧
 ; To prove there exists a logically equivalent proposition for the logical connective
 ; ∧, we can consider (P1 ∧ P2). Since Q1 <=> P1 and Q2 <=> P2 by the IH, then using
-; only connectives in {∨,¬}: ¬(¬Q1 ∨ ¬Q2) <=> (Q1 ∧ Q2) <=> (P1 ∧ P2). Thus,
-; there exists a logically equivalent proposition for (P1 ∧ P2) using only {∨,¬}.
+; only connectives in {∨,¬} and applying De Morgan's Law: ¬(¬Q1 ∨ ¬Q2) <=> (Q1 ∧ Q2) 
+; <=> (P1 ∧ P2). Thus, there exists a logically equivalent proposition for (P1 ∧ P2) 
+; using only {∨,¬}.
 
 ; ∨
 ; To prove there exists a logically equivalent proposition for the logical connective
