@@ -76,15 +76,26 @@
 
 ; PART TWO (A): Define a datatype for the class P_V of propositions.
 
+; ----- ANSWER STARTS HERE -----
+; p ::= any variable/clause
+; P_V ::= p | P_V ∧ P_V | P_V ∨ P_V | ¬P_V | P_V ⇒ P_V
+; ----- ANSWER ENDS HERE -----
+
 ; PART TWO (B): Using this datatype, develop a purely functional R5RS program which
 ; inputs a proposition in P_V constructed using ∧, ∨, ¬, and ⇒ and which outputs a
 ; logically equivalent proposition which uses only ∨ and ¬. Prove the correctness of
 ; your program using the proof you gave in Part One.
 
+; ----- ANSWER STARTS HERE -----
+; ----- ANSWER ENDS HERE -----
+
 ; PART TWO (C): Give a complete specification and development (including a proof)
 ; for an interpreter of propositions in your class P_V. The interpreter will input a
 ; proposition and a list of bindings of truth values for variables, and will return
 ; the computed value of the input proposition using these values for its variables.
+
+; ----- ANSWER STARTS HERE -----
+; ----- ANSWER ENDS HERE -----
 
 ; PART TWO (D): Demonstrate your interpreter by combining it with the translator you
 ; constructed for (B).
@@ -96,3 +107,6 @@
 ;                      |                                                         |
 ;                      |                                                         |
 ;    proposition in P_V with just ∨ and ¬ -------(interpreter)------------- truth value
+
+; ----- ANSWER STARTS HERE -----
+; ----- ANSWER ENDS HERE -----
