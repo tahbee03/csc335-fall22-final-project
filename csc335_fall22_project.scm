@@ -28,6 +28,48 @@
 ; ∨ and ¬.
 
 ; ----- ANSWER STARTS HERE -----
+
+; We need to prove that for any proposition P, that there exists a proposiition
+; containing only {∨,¬}, say Q, that is logically equivalent to P.
+
+; Basis Step:
+; For a proposition v in the set of variables V, v does not use {∧,∨,¬,⇒}
+; thus it is vacously true that v can be of {∨,¬}, because it cannot be proven
+; otherwise. 
+
+; Inductive Hypothesis:
+; For any proposition P, there exists a proposition using only {∨,¬} that is
+; logically equivalent to P. 
+
+; Inductive Step:
+; By the induction hypothesis there is a proposition, say Q, which uses only
+; {∨,¬}, that is logically equivalent to P.
+;
+; ¬
+; To prove there exists a logically equivalent proposition for the logical connective
+; ¬, we can consider ¬P. Since Q <=> P, ¬Q uses only ¬ ∈ {∨,¬}, and ¬Q <=> ¬P. Thus,
+; there exists a logically equivalent proposition for ¬P using only {∨,¬}.
+
+; ∧
+; To prove there exists a logically equivalent proposition for the logical connective
+; ∧, we can consider (P1 ∧ P2). Since Q1 <=> P1 and Q2 <=> P2 by the IH, then using
+; only connectives in {∨,¬} and applying De Morgan's Law: ¬(¬Q1 ∨ ¬Q2) <=> (Q1 ∧ Q2) 
+; <=> (P1 ∧ P2). Thus, there exists a logically equivalent proposition for (P1 ∧ P2) 
+; using only {∨,¬}.
+
+; ∨
+; To prove there exists a logically equivalent proposition for the logical connective
+; ∨, we can consider (P1 ∨ P2). Since Q1 <=> P1 and Q2 <=> P2 by the IH, then using
+; only connectives in {∨,¬}: (Q1 ∨ Q2) <=> (P1 ∨ P2). Thus, there exists a logically
+; equivalent proposition for (P1 ∨ P2) using only {∨,¬}.
+
+; ⇒
+; To prove there exists a logically equivalent proposition for the logical connective
+; ⇒, we can consider P1 ⇒ P2. Since Q1 <=> P1 and Q1 <=> P2 by the IH, then using
+; only connectives in {∨,¬} and logical equivalencies for conditional statements:
+; (¬Q1 ∨ Q2) <=> (Q1 ⇒ Q2) <=> (P1 ⇒ P2). Thus, there exists a logically equivalent
+; proposition for (P1 ⇒ P2) using only {∨,¬}.
+
 ; ----- ANSWER ENDS HERE -----
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
