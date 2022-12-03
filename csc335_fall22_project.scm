@@ -78,7 +78,7 @@
 
 ; ----- ANSWER STARTS HERE -----
 ; p ::= any variable/clause
-; P_V ::= p | P_V ∧ P_V | P_V ∨ P_V | ¬P_V | P_V ⇒ P_V
+; P_V ::= p | (make-and P_V P_V) | (make-or P_V P_V) | (make-not P_V) | (make-implies P_V P_V)
 ; ----- ANSWER ENDS HERE -----
 
 ; PART TWO (B): Using this datatype, develop a purely functional R5RS program which
@@ -87,6 +87,58 @@
 ; your program using the proof you gave in Part One.
 
 ; ----- ANSWER STARTS HERE -----
+; Constructors
+(define (make-and v1 v2)
+  (list v1 '& v2))           ; returns (v1 & v2)
+
+(define (make-or v1 v2)
+  (list v1 '$ v2))           ; returns (v1 $ v2)
+
+(define (make-not v)
+  (list '! v))               ; returns (! v)
+
+(define (make-implies v1 v2)
+  (list v1 '=> v2))          ; returns (v1 => v2)
+
+; Selectors
+(define (first-operand p)
+  (if (= (length p) 3)
+      (car p)              ; v1 -> {&, $, =>} -> v2 -> () ==> v1
+      (cadr p)))           ; ! -> v -> ()                 ==> v
+
+(define (second-operand p)
+  (if (= (length p) 3)
+      (caddr p)            ; v1 -> {&, $, =>} -> v2 -> () ==> v2
+      (cadr p)))           ; ! -> v -> ()                 ==> v
+
+(define (operator p)
+  (if (= (length p) 3)
+      (cadr p)             ; v1 -> {&, $, =>} -> v2 -> () ==> {&, $, =>}
+      (car p)))            ; ! -> v -> ()                 ==> !
+
+; Classifiers
+(define (and-prop? p)
+  (equal? (operator p) '&))
+
+(define (or-prop? p)
+  (equal? (operator p) '$))
+
+(define (not-prop? p)
+  (equal? (operator p) '!))
+
+(define (implies-prop? p)
+  (equal? (operator p) '=>))
+
+; Main program
+(define (translate prop)
+  '())
+
+; PRECONDITION: ...
+; POSTCONDITION: ...
+; DESIGN IDEA: ...
+
+; QUESTION: Does the resulting proposition need to be simplified?
+; NOTE: Translator does not change the initial variable set.
 ; ----- ANSWER ENDS HERE -----
 
 ; PART TWO (C): Give a complete specification and development (including a proof)
