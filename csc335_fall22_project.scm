@@ -78,7 +78,7 @@
 
 ; ----- ANSWER STARTS HERE -----
 ; p ::= any variable/clause
-; P_V ::= p | P_V ∧ P_V | P_V ∨ P_V | ¬P_V | P_V ⇒ P_V
+; P_V ::= p | (make-and P_V P_V) | (make-or P_V P_V) | (make-not P_V) | (make-implies P_V P_V)
 ; ----- ANSWER ENDS HERE -----
 
 ; PART TWO (B): Using this datatype, develop a purely functional R5RS program which
@@ -87,6 +87,91 @@
 ; your program using the proof you gave in Part One.
 
 ; ----- ANSWER STARTS HERE -----
+; Constructors
+(define (make-and v1 v2)
+  (list v1 '& v2))           ; returns (v1 & v2)
+
+(define (make-or v1 v2)
+  (list v1 '$ v2))           ; returns (v1 $ v2)
+
+(define (make-not v)
+  (list '! v))               ; returns (! v)
+
+(define (make-implies v1 v2)
+  (list v1 '=> v2))          ; returns (v1 => v2)
+
+; Selectors
+(define (first-operand p)
+  (if (= (length p) 3)
+      (car p)              ; v1 -> {&, $, =>} -> v2 -> () ==> v1
+      (cadr p)))           ; ! -> v -> ()                 ==> v
+
+(define (second-operand p)
+  (if (= (length p) 3)
+      (caddr p)            ; v1 -> {&, $, =>} -> v2 -> () ==> v2
+      (cadr p)))           ; ! -> v -> ()                 ==> v
+
+(define (operator p)
+  (if (= (length p) 3)
+      (cadr p)             ; v1 -> {&, $, =>} -> v2 -> () ==> {&, $, =>}
+      (car p)))            ; ! -> v -> ()                 ==> !
+
+; Classifiers
+(define (and-prop? p)
+  (equal? (operator p) '&))
+
+(define (or-prop? p)
+  (equal? (operator p) '$))
+
+(define (not-prop? p)
+  (equal? (operator p) '!))
+
+(define (implies-prop? p)
+  (equal? (operator p) '=>))
+
+; Main program
+(define (translate prop)
+  (cond ((not (pair? prop)) prop)
+        ((and-prop? prop) (make-not (make-or (make-not (first-operand prop)) (make-not (second-operand prop)))))
+        ((or-prop? prop) (make-or (translate (first-operand prop)) (translate (second-operand prop))))
+        ((not-prop? prop) (make-not (translate (first-operand prop))))
+        ((implies-prop? prop) (make-or (make-not (first-operand prop)) (second-operand prop)))))
+
+; PRECONDITION: The program accepts a logical proposition, prop, that consists
+; of variables and the operation 
+
+; POSTCONDITION: The program returns a logical proposition that consists of variables
+; and the operations {∨,¬}.
+
+; DESIGN IDEA: With the use of the constructors (which contain the list primitive)
+; and the selectors (which contain the car and cdr primitives), we can build a
+; program that constructs and returns a new list. Since the underlying list
+; primitive is used to construct a list, it might be best to implement a
+; recursive solution that unwinds the given proposition.
+
+; BASIS STEP: Variables of the set V are considered to be proper components of the
+; class P_V. Therefore, the base case of the program occurs when it encounters
+; exactly one proper component (which can also be classified as not a pair). 
+
+; INDUCTION HYPOTHESIS: Any use of the selectors first-operand and second-operand
+; will either return a proposition in the class P_V or a variable in the set V.
+
+; INDUCTION STEP: The logical propositions used in this program are represented
+; as Scheme lists. Because of this, the base case can be reached if we "cdr down"
+; the lists -- at least, this is the most reasonable way to do so. Each of the
+; selector functions have an underlying car, cdr, or some combination of the two that
+; implement this functionality. By using these selectors as arguments of each
+; recursive call, we are essentially shrinking the size of the list and ultimately
+; decreasing the number of proper components present in the list. Therefore, this
+; shows that if the precondition is met, the postcondition can also be met
+; with a recursive solution.
+
+; QUESTION: Does the resulting proposition need to be simplified?
+; NOTE: Translator does not change the initial variable set.
+; NOTE (2): All acceptable propositions are in the following forms:
+;    - single variable (ex. (x))
+;    - basic proposition (ex. (x & y))
+;    - complex/nested propositon (ex. ((z $ (x & y)) => w))
 ; ----- ANSWER ENDS HERE -----
 
 ; PART TWO (C): Give a complete specification and development (including a proof)
