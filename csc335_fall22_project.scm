@@ -131,14 +131,47 @@
 
 ; Main program
 (define (translate prop)
-  '())
+  (cond ((not (pair? prop)) prop)
+        ((and-prop? prop) (make-not (make-or (make-not (first-operand prop)) (make-not (second-operand prop)))))
+        ((or-prop? prop) (make-or (translate (first-operand prop)) (translate (second-operand prop))))
+        ((not-prop? prop) (make-not (translate (first-operand prop))))
+        ((implies-prop? prop) (make-or (make-not (first-operand prop)) (second-operand prop)))))
 
-; PRECONDITION: ...
-; POSTCONDITION: ...
-; DESIGN IDEA: ...
+; PRECONDITION: The program accepts a logical proposition, prop, that consists
+; of variables and the operation 
+
+; POSTCONDITION: The program returns a logical proposition that consists of variables
+; and the operations {∨,¬}.
+
+; DESIGN IDEA: With the use of the constructors (which contain the list primitive)
+; and the selectors (which contain the car and cdr primitives), we can build a
+; program that constructs and returns a new list. Since the underlying list
+; primitive is used to construct a list, it might be best to implement a
+; recursive solution that unwinds the given proposition.
+
+; BASIS STEP: Variables of the set V are considered to be proper components of the
+; class P_V. Therefore, the base case of the program occurs when it encounters
+; exactly one proper component (which can also be classified as not a pair). 
+
+; INDUCTION HYPOTHESIS: Any use of the selectors first-operand and second-operand
+; will either return a proposition in the class P_V or a variable in the set V.
+
+; INDUCTION STEP: The logical propositions used in this program are represented
+; as Scheme lists. Because of this, the base case can be reached if we "cdr down"
+; the lists -- at least, this is the most reasonable way to do so. Each of the
+; selector functions have an underlying car, cdr, or some combination of the two that
+; implement this functionality. By using these selectors as arguments of each
+; recursive call, we are essentially shrinking the size of the list and ultimately
+; decreasing the number of proper components present in the list. Therefore, this
+; shows that if the precondition is met, the postcondition can also be met
+; with a recursive solution.
 
 ; QUESTION: Does the resulting proposition need to be simplified?
 ; NOTE: Translator does not change the initial variable set.
+; NOTE (2): All acceptable propositions are in the following forms:
+;    - single variable (ex. (x))
+;    - basic proposition (ex. (x & y))
+;    - complex/nested propositon (ex. ((z $ (x & y)) => w))
 ; ----- ANSWER ENDS HERE -----
 
 ; PART TWO (C): Give a complete specification and development (including a proof)
