@@ -132,10 +132,10 @@
 ; Main program
 (define (translate prop)
   (cond ((not (pair? prop)) prop)
-        ((and-prop? prop) (make-not (make-or (make-not (first-operand prop)) (make-not (second-operand prop)))))
+        ((and-prop? prop) (make-not (make-or (make-not (translate (first-operand prop))) (make-not (translate (second-operand prop))))))
         ((or-prop? prop) (make-or (translate (first-operand prop)) (translate (second-operand prop))))
         ((not-prop? prop) (make-not (translate (first-operand prop))))
-        ((implies-prop? prop) (make-or (make-not (first-operand prop)) (second-operand prop)))))
+        ((implies-prop? prop) (make-or (make-not (translate (first-operand prop))) (translate (second-operand prop))))))
 
 ; PRECONDITION: The program accepts a logical proposition, prop, that consists
 ; of variables and the operation 
