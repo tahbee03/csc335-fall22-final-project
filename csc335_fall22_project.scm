@@ -180,6 +180,23 @@
 ; the computed value of the input proposition using these values for its variables.
 
 ; ----- ANSWER STARTS HERE -----
+; we need to define functions for and, or, not, implies.
+; or:
+(define $-function
+  (lambda (v1 v2) (cond (v1 v1)      ; if v1 is true return v1
+                        (else v2)))) ; else return truth value of v2
+; and:
+(define &-function
+  (lambda (v1 v2) (cond (v1 v2)      ; if v1 is true return v2
+                        (else v1)))) ; else return truth value of v1
+; not:
+(define !-function
+  (lambda (v1) (cond (v1 #f)         ; if v1 is true return false
+                     (else v1))))    ; else return true
+; implies:
+(define =>-function
+  (lambda (v1 v2) (cond ((eq? v1 v2) #t)
+                        (else v2))))
 ; ----- ANSWER ENDS HERE -----
 
 ; PART TWO (D): Demonstrate your interpreter by combining it with the translator you
