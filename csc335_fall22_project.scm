@@ -214,7 +214,7 @@
 ; ==============================
 ; Helpers:
 ; ==============================
-; retrive truth value:
+; retrieve truth value:
 ; bindings is a list of lists
 (define (truth-value var bindings)
     (let ((binding (car bindings)))
