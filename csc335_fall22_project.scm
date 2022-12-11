@@ -74,20 +74,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;===================================================================================
 ; PART TWO (A): Define a datatype for the class P_V of propositions.
-
+;===================================================================================
 ; ----- ANSWER STARTS HERE -----
 ; p ::= any variable/clause
 ; P_V ::= p | (make-and P_V P_V) | (make-or P_V P_V) | (make-not P_V) | (make-implies P_V P_V)
 ; ----- ANSWER ENDS HERE -----
 
+;===================================================================================
 ; PART TWO (B): Using this datatype, develop a purely functional R5RS program which
 ; inputs a proposition in P_V constructed using ∧, ∨, ¬, and ⇒ and which outputs a
 ; logically equivalent proposition which uses only ∨ and ¬. Prove the correctness of
 ; your program using the proof you gave in Part One.
-
+;===================================================================================
 ; ----- ANSWER STARTS HERE -----
+; ==============================
 ; Constructors
+; ==============================
 (define (make-and v1 v2)
   (list v1 '& v2))           ; returns (v1 & v2)
 
@@ -100,7 +104,9 @@
 (define (make-implies v1 v2)
   (list v1 '=> v2))          ; returns (v1 => v2)
 
+; ==============================
 ; Selectors
+; ==============================
 (define (first-operand p)
   (if (= (length p) 3)
       (car p)              ; v1 -> {&, $, =>} -> v2 -> () ==> v1
@@ -116,7 +122,9 @@
       (cadr p)             ; v1 -> {&, $, =>} -> v2 -> () ==> {&, $, =>}
       (car p)))            ; ! -> v -> ()                 ==> !
 
+; ==============================
 ; Classifiers
+; ==============================
 (define (and-prop? p)
   (equal? (operator p) '&))
 
@@ -129,7 +137,9 @@
 (define (implies-prop? p)
   (equal? (operator p) '=>))
 
+; ==============================
 ; Main program
+; ==============================
 (define (translate prop)
   (cond ((not (pair? prop)) prop)
         ((and-prop? prop) (make-not (make-or (make-not (translate (first-operand prop))) (make-not (translate (second-operand prop))))))
@@ -174,34 +184,80 @@
 ;    - complex/nested propositon (ex. ((z $ (x & y)) => w))
 ; ----- ANSWER ENDS HERE -----
 
+;;==================================================================================
 ; PART TWO (C): Give a complete specification and development (including a proof)
 ; for an interpreter of propositions in your class P_V. The interpreter will input a
 ; proposition and a list of bindings of truth values for variables, and will return
 ; the computed value of the input proposition using these values for its variables.
-
+;===================================================================================
 ; ----- ANSWER STARTS HERE -----
-; we need to define functions for and, or, not, implies.
+; ==============================
+; Function (and, or, not, imply)
+; ==============================
 ; or:
-(define $-function
+(define or-function
   (lambda (v1 v2) (cond (v1 v1)      ; if v1 is true return v1
                         (else v2)))) ; else return truth value of v2
 ; and:
-(define &-function
+(define and-function
   (lambda (v1 v2) (cond (v1 v2)      ; if v1 is true return v2
                         (else v1)))) ; else return truth value of v1
 ; not:
-(define !-function
+(define not-function
   (lambda (v1) (cond (v1 #f)         ; if v1 is true return false
-                     (else v1))))    ; else return true
+                     (else #t))))    ; else return true
 ; implies:
-(define =>-function
+(define implies-function
   (lambda (v1 v2) (cond ((eq? v1 v2) #t)
                         (else v2))))
+
+; ==============================
+; Helpers:
+; ==============================
+; retrive truth value:
+; bindings is a list of lists
+(define (truth-value var bindings)
+    (let ((binding (car bindings)))
+      (cond ((eq? var (car binding)) (cadr binding))
+            (else (truth-value var (cdr bindings))))
+      ))
+; atom definition:
+(define (atom? a)
+  (and (not (null? a)) (not (pair? a))))
+; ==============================
+; INTERPRETER:
+; ==============================
+(define proposition
+  (lambda (prop bindings)
+    (cond ((atom? prop) (truth-value prop bindings))
+          (else
+           (cond ((and-prop? prop)
+                  (and-function
+                   (proposition (first-operand prop)  bindings)
+                   (proposition (second-operand prop) bindings)))
+                 ((or-prop? prop)
+                  (or-function
+                   (proposition (first-operand prop)  bindings)
+                   (proposition (second-operand prop) bindings)))
+                 ((implies-prop? prop)
+                  (implies-function
+                   (proposition (first-operand prop)  bindings)
+                   (proposition (second-operand prop) bindings)))
+                 ((not-prop? prop)
+                  (not-function
+                   (proposition (first-operand prop)  bindings))))
+           ))
+    ))
+
+; ==============================
+; Proof: (TODO)
+; ==============================
 ; ----- ANSWER ENDS HERE -----
 
+;===================================================================================
 ; PART TWO (D): Demonstrate your interpreter by combining it with the translator you
 ; constructed for (B).
-
+;===================================================================================
 ;         proposition in full P_V ---------------(interpreter)------------- truth value
 ;                      |                                                         |
 ;                      |                                                         |
@@ -211,4 +267,53 @@
 ;    proposition in P_V with just ∨ and ¬ -------(interpreter)------------- truth value
 
 ; ----- ANSWER STARTS HERE -----
+; ==============================
+; simple:
+; ==============================
+(define p1 (make-and 'p 'q))
+(define p2 (make-or 'p 'q))
+(define p3 (make-not 'p))
+(define p4 (make-implies 'p 'q))
+; ==============================
+; nested:
+; ==============================
+(define p5 (make-and p1 p2))
+(define p6 (make-or p5 p4))
+(define p7 (make-not p6))
+(define p8 (make-implies p7 p6))
+; ==============================
+; bindings: 
+; ==============================
+(define b1 '((p #t) (q #t)))
+(define b2 '((p #t) (q #f)))
+(define b3 '((p #f) (q #t)))
+(define b4 '((p #f) (q #f)))
+(define b5 '((p #t)))
+; ==============================
+; TESTS:
+; ==============================
+(define (display-all proposition bindings)
+  (display "Proposition: ") (display proposition)
+  (newline)
+  (display "Bindings: ") (display bindings)
+  (newline)
+  (display "Result: "))
+
+(proposition p1 b1)
+(proposition (translate p1) b1)
+;(proposition p1 b2)
+;(proposition (translate p1) b2)
+;(proposition p1 b3)
+;(proposition (translate p1) b3)
+;(proposition p1 b4)
+;(proposition (translate p1) b4)
+(proposition p5 b1)
+(proposition (translate p5) b1)
+
+(proposition p7 b3)
+(proposition (translate p7) b3)
+
+
 ; ----- ANSWER ENDS HERE -----
+
+
