@@ -216,9 +216,9 @@
 ; Helpers:
 ; ==============================
 ; retrieve truth value:
-; var is a variable and bindings
-; is a list of 2-element lists of the form:
-; (var TF), where TF is the truth value (#t or #f) for var.
+; var is a variable and v-bindings
+; is the list of 2-element lists of the form:
+; (v TF), where TF is the truth value (#t or #f) for var ∈ v.
 (define (truth-value var v-bindings)
     (let ((binding (car v-bindings)))
       (cond ((eq? var (car binding)) (cadr binding))
