@@ -23,25 +23,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; ==================================================================================
 ; PART ONE: Using structural induction, prove that any proposition written using the
 ; operators ∧, ∨, ¬, and ⇒ is logically equivalent to a proposition which uses just
 ; ∨ and ¬.
-
+; ==================================================================================
 ; ----- ANSWER STARTS HERE -----
 
 ; We need to prove that for any proposition P, that there exists a proposiition
 ; containing only {∨,¬}, say Q, that is logically equivalent to P.
 
-; Basis Step:
+; BASIS STEP:
 ; For a proposition v in the set of variables V, v does not use {∧,∨,¬,⇒}
 ; thus it is vacously true that v can be of {∨,¬}, because it cannot be proven
 ; otherwise. 
 
-; Inductive Hypothesis:
+; INDUCTION HYPOTHESIS:
 ; For any proposition P, there exists a proposition using only {∨,¬} that is
 ; logically equivalent to P. 
 
-; Inductive Step:
+; INDUCTION STEP:
 ; By the induction hypothesis there is a proposition, say Q, which uses only
 ; {∨,¬}, that is logically equivalent to P.
 ;
@@ -215,12 +216,15 @@
 ; Helpers:
 ; ==============================
 ; retrieve truth value:
-; bindings is a list of lists
-(define (truth-value var bindings)
-    (let ((binding (car bindings)))
+; var is a variable and bindings
+; is a list of 2-element lists of the form:
+; (var TF), where TF is the truth value (#t or #f) for var.
+(define (truth-value var v-bindings)
+    (let ((binding (car v-bindings)))
       (cond ((eq? var (car binding)) (cadr binding))
-            (else (truth-value var (cdr bindings))))
+            (else (truth-value var (cdr v-bindings))))
       ))
+
 ; atom definition:
 (define (atom? a)
   (and (not (null? a)) (not (pair? a))))
@@ -228,30 +232,70 @@
 ; INTERPRETER:
 ; ==============================
 (define proposition
-  (lambda (prop bindings)
-    (cond ((atom? prop) (truth-value prop bindings))
+  (lambda (prop v-bindings)
+    (cond ((atom? prop) (truth-value prop v-bindings))
           (else
            (cond ((and-prop? prop)
                   (and-function
-                   (proposition (first-operand prop)  bindings)
-                   (proposition (second-operand prop) bindings)))
+                   (proposition (first-operand prop)  v-bindings)
+                   (proposition (second-operand prop) v-bindings)))
                  ((or-prop? prop)
                   (or-function
-                   (proposition (first-operand prop)  bindings)
-                   (proposition (second-operand prop) bindings)))
+                   (proposition (first-operand prop)  v-bindings)
+                   (proposition (second-operand prop) v-bindings)))
                  ((implies-prop? prop)
                   (implies-function
-                   (proposition (first-operand prop)  bindings)
-                   (proposition (second-operand prop) bindings)))
+                   (proposition (first-operand prop)  v-bindings)
+                   (proposition (second-operand prop) v-bindings)))
                  ((not-prop? prop)
                   (not-function
-                   (proposition (first-operand prop)  bindings))))
+                   (proposition (first-operand prop)  v-bindings))))
            ))
     ))
 
 ; ==============================
-; Proof: (TODO)
+; Proof:
 ; ==============================
+; DESIGN STRATEGY:
+; The constructors build propositions in P_V. Each proposition in P_V is of the
+; form: (v1 lc v2) and (lc v1)  where v1,v2 ∈ P_V, and
+; lc is a logical connective ∈ {!, $, &, =>}. Thus since v1,v2 ∈ P_V, we can
+; recursively process the proposition using our selectors first-operand and
+; second-operand. If v1 or v2 are variables then they have no logical connectives
+; and their truth value from the list of bindings can be returned. To defer the
+; logical operations on the returned truth values, we guard the calls to the
+; interpreter with our pre-defined functions for "and", "or", "not", and "implies".
+
+; PRE-CONDITION:
+; prop is a proposition in P_V, and v-bindings is a list of bindings of truth values
+; for variables v in the proposition prop. Each binding is a list of 2-elements of the
+; form: (v TF), where TF is the truth value (#t or #f) for a variable v in prop.
+
+; POST-CONDITION:
+; The interpreter returns the computed truth value:#t or #f, of the proposition prop.
+
+; BASIS STEP:
+; prop is variable, thus return its truth value.
+
+; INDUCTION HYPOTHESIS:
+; Let P be a proposition in P_V, and B be the list of bindings for the variables in P.
+; We Assume that (proposition (first-operand P) B) and (proposition (second-operand P) B)
+; return the correct truth values respectively.
+
+; INDUCTION STEP:
+; By our induction hypothesis (proposition (first-operand P) B) and
+; (proposition (second-operand P) B) respectively return correct truth values for the
+; first and second operand of P. We have two cases:
+
+; Case (and, or, implies):
+; Then (F (proposition (first-operand P) B) (proposition (second-operand P) B)), where
+; F is a logical function of "or-function", "and-function", "implies-function", returns
+; the correct truth value for (proposition P B).
+
+; Case (not):
+; Then (F (proposition (first-operand P) B)), where F is the defined logical
+; function: "not-function", returns the correct truth value for (proposition P B).
+
 ; ----- ANSWER ENDS HERE -----
 
 ;===================================================================================
@@ -292,28 +336,28 @@
 ; ==============================
 ; TESTS:
 ; ==============================
-(define (display-all proposition bindings)
-  (display "Proposition: ") (display proposition)
-  (newline)
-  (display "Bindings: ") (display bindings)
-  (newline)
-  (display "Result: "))
-
-(proposition p1 b1)
-(proposition (translate p1) b1)
+(define (show P B)
+  (display "Proposition: ") (display P)
+  (display "\tBindings: ") (display B) (newline)
+  (display "Translation: ") (display (translate P)) (newline))
+; ------------------------------
+(show p1 b1) (proposition p1 b1) (proposition (translate p1) b1)
+(show p1 b2) (proposition p1 b2) (proposition (translate p1) b2)
+(show p5 b1) (proposition p5 b1) (proposition (translate p5) b1)
+(show p7 b3) (proposition p7 b3) (proposition (translate p7) b3)
+;(proposition p1 b1)
+;(proposition (translate p1) b1)
 ;(proposition p1 b2)
 ;(proposition (translate p1) b2)
 ;(proposition p1 b3)
 ;(proposition (translate p1) b3)
 ;(proposition p1 b4)
 ;(proposition (translate p1) b4)
-(proposition p5 b1)
-(proposition (translate p5) b1)
-
-(proposition p7 b3)
-(proposition (translate p7) b3)
+;(proposition p5 b1)
+;(proposition (translate p5) b1)
+;(proposition p7 b3)
+;(proposition (translate p7) b3)
 
 
 ; ----- ANSWER ENDS HERE -----
-
 
