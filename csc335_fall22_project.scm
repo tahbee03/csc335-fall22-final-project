@@ -225,6 +225,28 @@
             (else (truth-value var (cdr v-bindings))))
       ))
 
+; Proof for truth-value:
+; Design Idea:
+; truth-value has two parameters: a variable var, and a list of variable bindings
+; v-bindings.The variable var must exist as a variable in the list of bindings along
+; with its respective truth value. Every binding is a list and has the form (v TF),
+; where v is a variable and TF is its truth value.
+; Thus v-bindings is of the form ((v1 TF1) (v2 TF2) ... (vn TFn)), where n is the
+; number of bindings in the list.
+; we will car each binding in the list and check to see if the stored variable v is
+; the same as var. Once a match is found, we car the cdr of the binding to retrieve
+; the truth value.
+
+; pre-condition:
+; var is a variable that exists in the list of bindings v-bindings.
+; v-bindings is of the form ((v1 TF1) (v2 TF2) ... (vn TFn)), where v is
+; a variable, and TF is its truth value.
+; post-condition:
+; return the truth value of the variable var.
+
+; Guess Invariant:
+;
+
 ; atom definition:
 (define (atom? a)
   (and (not (null? a)) (not (pair? a))))
