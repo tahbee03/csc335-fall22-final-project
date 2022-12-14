@@ -215,17 +215,17 @@
 ; ==============================
 ; Helpers:
 ; ==============================
-; retrieve truth value:
-; var is a variable and v-bindings
-; is the list of 2-element lists of the form:
-; (v TF), where TF is the truth value (#t or #f) for var ∈ v.
 (define (truth-value var v-bindings)
-    (let ((binding (car v-bindings)))
+  (define (iter acc rest)
+    (let ((binding (car acc)))
       (cond ((eq? var (car binding)) (cadr binding))
-            (else (truth-value var (cdr v-bindings))))
-      ))
+            (else (iter (append (list(car rest)) acc) (cdr rest))))))
+  (let ((first (list(car v-bindings))))
+    (iter first (cdr v-bindings))))
 
+; ==============================
 ; Proof for truth-value:
+; ==============================
 ; Design Idea:
 ; truth-value has two parameters: a variable var, and a list of variable bindings
 ; v-bindings.The variable var must exist as a variable in the list of bindings along
@@ -233,23 +233,51 @@
 ; where v is a variable and TF is its truth value.
 ; Thus v-bindings is of the form ((v1 TF1) (v2 TF2) ... (vn TFn)), where n is the
 ; number of bindings in the list.
-; we will car each binding in the list and check to see if the stored variable v is
-; the same as var. Once a match is found, we car the cdr of the binding to retrieve
-; the truth value.
+; We can use an accumulator variable call acc which will contain the list of
+; processed and currently processing bindings. The currently processing binding will
+; always be first in this list. We can check if the car of the current binding is
+; equal to var, and if it is we return its truth value. Otherwise we move on to the
+; next binding. The next binding will be the first binding in a variable called rest
+; which contains all of the bindings remaining to be processed. We access this
+; binding using (cdr rest) and append it to the accumulator variable to process it.
 
 ; pre-condition:
+; ==============================
 ; var is a variable that exists in the list of bindings v-bindings.
 ; v-bindings is of the form ((v1 TF1) (v2 TF2) ... (vn TFn)), where v is
 ; a variable, and TF is its truth value.
-; post-condition:
-; return the truth value of the variable var.
 
-; Guess Invariant:
+; post-condition:
+; ==============================
+; returns the truth value of the variable var.
+
+; Guess Invariant: v-bindings = (append (reverse acc) rest)
+
+; Weak-Enough?:
+; ==============================
+; At initialization, acc contains the first bindings of v-bindings. That is
+; acc = '((v1 TF1)). The variable rest at initizaliation contains all of the
+; bindings aside from first, that is '((v2 TF2) (v3 TF3) ... (vn TFn)). Thus,
+; v-bindings = (append (reverse acc) rest).
+
+; Strong-Enough?:
+; ==============================
+; At termination, var has been found and thus its truth value is returned. The acc
+; variable at this point contains every binding in v-bindings, but in reverse order,
+; that is ((vn TFn) (vn-1 TFn-1) ... (v2 TF2) (v1 TF1)). The rest variable at this
+; point is empty: '(). Thus if we append the reverse of acc with '(), we get back
+; the original v-bindings.
 ;
+; Preservable?:
+; ==============================
+; Yes, at any point in the program, acc = the reverse of the list of bindings present
+; in v-bindings but not in rest, and in reverse order. Thus reversing acc and appending
+; it to rest gives v-bindings.
 
 ; atom definition:
 (define (atom? a)
   (and (not (null? a)) (not (pair? a))))
+
 ; ==============================
 ; INTERPRETER:
 ; ==============================
